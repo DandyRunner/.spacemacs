@@ -50,7 +50,7 @@ This function should only modify configuration layer settings."
           magit-revert-buffers 'silent
           magit-refs-show-commit-count 'all
           magit-revision-show-gravatars nil)
-     ivy
+     (ivy :variables ivy-enable-advanced-buffer-information t)
      ;; markdown
      ;; multiple-cursors
      ;; org
