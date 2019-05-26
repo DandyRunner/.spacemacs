@@ -1,0 +1,2 @@
+# .spacemacs
+Private Spacemacs configuration
