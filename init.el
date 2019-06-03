@@ -51,9 +51,13 @@ This function should only modify configuration layer settings."
           magit-refs-show-commit-count 'all
           magit-revision-show-gravatars nil)
      (ivy :variables ivy-enable-advanced-buffer-information t)
+     (ibuffer :variables ibuffer-group-buffers-by 'projects)
      ;; markdown
      ;; multiple-cursors
-     ;; org
+     (org :variables
+          org-want-todo-bindings t
+          org-brain-path "~/org/brain")
+     (deft :variables deft-directory "~/org/brain")
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -462,40 +466,57 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  
+  (setq org-bullets-bullet-list '("■" "◆" "▲" "▶"))
 
-(defun my/img-maker ()
- "Make folder if not exist, define image name based on time/date" 
-  (setq myvar/img-folder-path (concat default-directory "images/"))
+  (defun my/img-maker ()
+    "Make folder if not exist, define image name based on time/date" 
+    (setq myvar/img-folder-path (concat default-directory "Images/"))
 
-  ; Make img folder if it doesn't exist.
-  (if (not (file-exists-p myvar/img-folder-path)) ;[ ] refactor thir and screenshot code.
-       (mkdir myvar/img-folder-path))
+                                        ; Make img folder if it doesn't exist.
+    (if (not (file-exists-p myvar/img-folder-path)) ;[ ] refactor thir and screenshot code.
+        (mkdir myvar/img-folder-path))
 
-  (setq myvar/img-name (concat (file-name-sans-extension (buffer-name)) "_" (format-time-string "%Y_%m_%d__%H_%M_%S") ".png"))
-  (setq myvar/img-Abs-Path (concat myvar/img-folder-path myvar/img-name)) ;Relative to workspace.
+    (setq myvar/img-name (concat (file-name-sans-extension (buffer-name)) "_" (format-time-string "%Y_%m_%d__%H_%M_%S") ".png"))
+    (setq myvar/img-Abs-Path (concat myvar/img-folder-path myvar/img-name)) ;Relative to workspace.
 
-  (setq myvar/relative-filename (concat "./images/" myvar/img-name))
-  (insert "[[" myvar/relative-filename "]]" "\n"))
+    (setq myvar/relative-filename (concat "./Images/" myvar/img-name))
+    (insert "[[" myvar/relative-filename "]]" "\n"))
 
-(defun my/org-screenshot ()
-  "Take a screenshot into a time stamped unique-named file in the
+  (defun my/org-screenshot ()
+    "Take a screenshot into a time stamped unique-named file in the
  sub-directory (%filenameIMG) as the org-buffer and insert a link to this file."
-  (interactive)
-  (my/img-maker)
-  ;(make-frame-invisible)
-  (lower-frame)
-  (if (eq system-type 'darwin)
-      (call-process "screencapture" nil nil nil "-i" myvar/img-Abs-Path))
-  (if (eq system-type 'gnu/linux)
-      (call-process "import" nil nil nil myvar/img-Abs-Path))
-  (if (eq system-type 'windows-nt)
-      ((shell-command "snippingtool /clip")
-       (shell-command (concat "powershell -command \"Add-Type -AssemblyName System.Windows.Forms;if ($([System.Windows.Forms.Clipboard]::ContainsImage())) {$image = [System.Windows.Forms.Clipboard]::GetImage();[System.Drawing.Bitmap]$image.Save('" myvar/img-Abs-Path "',[System.Drawing.Imaging.ImageFormat]::Png); Write-Output 'clipboard content saved as file'} else {Write-Output 'clipboard does not contain image data'}\""))))
-  (raise-frame)
-  ;(make-frame-visible)
-  (org-display-inline-images))
- 
+    (interactive)
+    (my/img-maker)
+    ;;(make-frame-invisible)
+    (lower-frame)
+    (if (eq system-type 'darwin)
+        (call-process "screencapture" nil nil nil "-i" myvar/img-Abs-Path))
+    (if (eq system-type 'gnu/linux)
+        (call-process "import" nil nil nil myvar/img-Abs-Path))
+    (if (eq system-type 'windows-nt)
+        ((shell-command "snippingtool /clip")
+         (shell-command (concat "powershell -command \"Add-Type -AssemblyName System.Windows.Forms;if ($([System.Windows.Forms.Clipboard]::ContainsImage())) {$image = [System.Windows.Forms.Clipboard]::GetImage();[System.Drawing.Bitmap]$image.Save('" myvar/img-Abs-Path "',[System.Drawing.Imaging.ImageFormat]::Png); Write-Output 'clipboard content saved as file'} else {Write-Output 'clipboard does not contain image data'}\""))))
+    (raise-frame)
+    ;;(make-frame-visible)
+    (org-display-inline-images))
+
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (which-key wgrep smex smeargle pcre2el org-present gntp org-mime macrostep lv htmlize helm-make gnuplot gitignore-mode gitconfig-mode gitattributes-mode dash popup git-link flx exec-path-from-shell evil-escape goto-chg elisp-slime-nav diminish deft epl ivy bind-map bind-key packed async avy))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
